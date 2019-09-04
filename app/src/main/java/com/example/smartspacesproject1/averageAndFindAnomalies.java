@@ -16,7 +16,7 @@ public class averageAndFindAnomalies
 	   * @return
 	   * 	a Vector of Doubles containing averaged data
 	   */
-	private static Vector<Double> movingAverage(int windowSize, Vector<Double> data)
+	public static Vector<Double> movingAverage(int windowSize, Vector<Double> data)
 	{
 		//create a new vector for the averaged data
 		Vector<Double> newData = new Vector<Double>();
@@ -49,7 +49,7 @@ public class averageAndFindAnomalies
 	   * 	true if an anomaly is found
 	   *	false otherwise
 	   */
-	private static boolean checkForAnomalies(Double threshhold, Vector<Double> data)
+	public static boolean checkForAnomalies(Double threshhold, Vector<Double> data)
 	{
 		//for each value in the data
 		for(int i = 0; i < data.size(); i++)

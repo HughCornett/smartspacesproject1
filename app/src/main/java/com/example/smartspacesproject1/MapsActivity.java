@@ -14,6 +14,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
@@ -52,6 +53,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean startMeasurements = false;
     private Button mButton;
 
+    private TextView zText;
+
 
     private Vector<Double> zValues = new Vector<>();
 
@@ -66,6 +69,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private int zoom = 15;
 
 
+    final private int windowsize =5;
+    final private double threshhold = 9.0;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,8 +83,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         getLocationPermission();
 
 
+
         mButton = (Button) findViewById(R.id.button);
         mButton.setEnabled(false);
+
+        zText = (TextView) findViewById(R.id.ztext);
+
+
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+
+        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
+
+        accelerometerListener = createAccelerometerListener();
+
+        sensorManager.registerListener(accelerometerListener, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+
 
 
 
@@ -90,12 +111,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
         mMap = googleMap;
-
-
-
-
-
-
 
     }
 
@@ -112,7 +127,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                     Double z= Double.valueOf(sensorEvent.values[2]);
                     zValues.add(z);
+
+
                 }
+                zText.setText(""+sensorEvent.values[2]);
 
             }
 
@@ -132,7 +150,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onLocationChanged(Location location) {
 
 
+
+
                 currentLatLang = new LatLng(location.getLatitude(),location.getLongitude());
+
+                Vector<Double> newdata;
+
+                newdata = averageAndFindAnomalies.movingAverage(windowsize, zValues);
+
+                if(averageAndFindAnomalies.checkForAnomalies(threshhold, newdata))
+                {
+                    addMarkerOnLocation(BitmapDescriptorFactory.HUE_MAGENTA, currentLatLang);
+                }
+
+                zValues.clear();
 
 
 
@@ -189,7 +220,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
 
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locationListener);
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 
             }else{
                 ActivityCompat.requestPermissions(this,
@@ -212,16 +243,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
 
-        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-
-        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-
-
-        accelerometerListener = createAccelerometerListener();
-
-
-
-
     }
 
 
@@ -236,9 +257,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if(currentLatLang!=null) {
             LatLng current = currentLatLang;
             moveCamera(currentLatLang, zoom);
-            mMap.addMarker(new MarkerOptions().position(current)
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
 
+            //addMarkerOnLocation(BitmapDescriptorFactory.HUE_AZURE, current);
             mButton.setEnabled(true);
 
         }
@@ -246,6 +266,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         {
             Toast.makeText(this,"not connected!", Toast.LENGTH_SHORT );
         }
+    }
+
+
+    private void addMarkerOnLocation(float color, LatLng current)
+    {
+        mMap.addMarker(new MarkerOptions().position(current)
+                .icon(BitmapDescriptorFactory.defaultMarker(color)));
     }
 
 
