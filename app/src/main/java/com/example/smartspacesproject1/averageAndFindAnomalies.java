@@ -75,75 +75,38 @@ public class averageAndFindAnomalies
 	 *		0: No anomaly
 	 *		(-)1: Small anomaly
 	 *		(-)2: Large anomaly
-	 *		(-)3: Slope
 	 */
-	public static int getAnomalyType(Double smallthreshold, Double largethreshold, Vector<Double> data)
+	public static anomalyTypePosition getAnomalyType(Double smallthreshold, Double largethreshold, Vector<Double> data)
 	{
-		int anomalyCode = 0;
-
-		//CHECK FOR POSITIVE SLOPE
-
-		boolean slope = true;
-		//if any data value is smaller than the one before
-		for(int i = 1; i < data.size(); i++)
-		{
-			if(data.get(i) < data.get(i-1))
-			{
-				//this data is not a positive slope
-				slope = false;
-				break;
-			}
-		}
-		//if all data values were larger than the previous, this is a positive slope
-		if(slope)
-		{
-			return 3;
-		}
-
-		//CHECK FOR NEGATIVE SLOPE
-
-		slope = true;
-		//if any data value is larger than the one before
-		for(int i = 1; i < data.size(); i++)
-		{
-			if(data.get(i) > data.get(i-1))
-			{
-				//this data is not a negative slope
-				slope = false;
-				break;
-			}
-		}
-		//if all data values were smaller than the previous, this is a negative slope
-		if(slope)
-		{
-			return -3;
-		}
-
 		//CHECK FOR POTHOLES/BUMPS
 
 		//for each value in the data
-		for(int i = 0; i < data.size(); i++)
+		for(int i = 0; i < data.size() - 1; i++)
 		{
 			//if the data is above the threshold (taking gravity into account)
 			if(data.get(i) > GRAVITY + smallthreshold)
 			{
 				if(data.get(i) > GRAVITY + largethreshold)
 				{
-					return 2;
+					//a large bump was found
+					return new anomalyTypePosition(2, i);
 				}
-				return 1;
+				//a small bump was found
+				return new anomalyTypePosition(1, i);
 			}
 			//if the data is below the negative threshold (taking gravity into account)
 			else if(data.get(i) < GRAVITY + (-1 *  smallthreshold))
 			{
 				if(data.get(i) < GRAVITY + (-1 * largethreshold))
 				{
-					return -2;
+					//a large pothole was found
+					return new anomalyTypePosition(-2, i);
 				}
-				return -1;
+				//a small pothole was found
+				return new anomalyTypePosition(-1, i);
 			}
 		}
 		//if no data values were found to be anomalies
-		return 0;
+		return new anomalyTypePosition(0, -1);
 	}
 }
