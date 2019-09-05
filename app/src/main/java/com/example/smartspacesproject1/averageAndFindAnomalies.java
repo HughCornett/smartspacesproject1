@@ -62,4 +62,88 @@ public class averageAndFindAnomalies
 		//if no data values were found to be anomalies
 		return false;
 	}
+
+	/**
+	* Returns the type of anomaly found in the data as an int
+	 * @param smallThreshhold
+	 * 		a data value outside smallThreshhold and inside largeThreshhold is a small anomaly
+	 * @param largeThreshhold
+	 * 	 * 	a data value outside largeThreshhold is a large anomaly
+	 * @param data
+	 * 		a Vector of Doubles, the data to be analysed for anomalies
+	 * @return
+	 *		0: No anomaly
+	 *		(-)1: Small anomaly
+	 *		(-)2: Large anomaly
+	 *		(-)3: Slope
+	 */
+	public static int getAnomalyType(Double smallThreshhold, Double largeThreshhold, Vector<Double> data)
+	{
+		int anomalyCode = 0;
+
+		//CHECK FOR POSITIVE SLOPE
+
+		boolean slope = true;
+		//if any data value is smaller than the one before
+		for(int i = 1; i < data.size(); i++)
+		{
+			if(data.get(i) < data.get(i-1))
+			{
+				//this data is not a positive slope
+				slope = false;
+				break;
+			}
+		}
+		//if all data values were larger than the previous, this is a positive slope
+		if(slope)
+		{
+			return 3;
+		}
+
+		//CHECK FOR NEGATIVE SLOPE
+
+		slope = true;
+		//if any data value is larger than the one before
+		for(int i = 1; i < data.size(); i++)
+		{
+			if(data.get(i) > data.get(i-1))
+			{
+				//this data is not a negative slope
+				slope = false;
+				break;
+			}
+		}
+		//if all data values were smaller than the previous, this is a negative slope
+		if(slope)
+		{
+			return -3;
+		}
+
+		//CHECK FOR POTHOLES/BUMPS
+
+		//for each value in the data
+		for(int i = 0; i < data.size(); i++)
+		{
+			//if the data is above the threshhold (taking gravity into account)
+			if(data.get(i) > GRAVITY + smallThreshhold)
+			{
+				if(data.get(i) > GRAVITY + largeThreshhold)
+				{
+					return 2;
+				}
+				return 1;
+			}
+			//if the data is below the negative threshhold (taking gravity into account)
+			else if(data.get(i) < GRAVITY + (-1 *  smallThreshhold))
+			{
+				if(data.get(i) < GRAVITY + (-1 * largeThreshhold))
+				{
+					return -2;
+				}
+				return -1;
+			}
+		}
+		//if no data values were found to be anomalies
+		return 0;
+	}
 }
