@@ -40,6 +40,9 @@ public class averageAndFindAnomalies
 	/**
 	   * Checks a Vector of filtered accelerometer data for
 	   * anomalies above the given threshold value
+     *
+     * OBSOLETE - REPLACED BY checkForAnomalies()
+     *
 	   * @param threshold 
 	   *	a data value outside this threshold is an anomaly
 	   * @param data
@@ -73,10 +76,8 @@ public class averageAndFindAnomalies
 	 * 		a Vector of Doubles, the data to be analysed for anomalies
 	 * @return
 	 *		0: No anomaly
-	 *		-1: Small hole
-	 *		-2: Large hole
-	 *		 1: Small bump
-	 *		 2: Large bump
+	 *		1: Small anomaly
+	 *		2: Large anomaly
 	 */
 	public static anomalyTypePosition getAnomalyType(Double smallthreshold, Double largethreshold, Vector<Double> data)
 	{
@@ -85,28 +86,18 @@ public class averageAndFindAnomalies
 		//for each value in the data
 		for(int i = 0; i < data.size(); i++)
 		{
-			//if the data is above the threshold (taking gravity into account)
-			if(data.get(i) > GRAVITY + smallthreshold)
+			//if the data is outside the small threshold (taking gravity into account)
+			if(data.get(i) > GRAVITY + smallthreshold || data.get(i) < GRAVITY - smallthreshold)
 			{
-				if(data.get(i) > GRAVITY + largethreshold)
-				{
-					//a large bump was found
-					return new anomalyTypePosition(2, i);
-				}
-				//a small bump was found
-				return new anomalyTypePosition(1, i);
-			}
-			//if the data is below the negative threshold (taking gravity into account)
-			else if(data.get(i) < GRAVITY - smallthreshold)
-			{
-				if(data.get(i) < GRAVITY - largethreshold)
-				{
-					//a large pothole was found
-					return new anomalyTypePosition(-2, i);
-				}
-				//a small pothole was found
-				return new anomalyTypePosition(-1, i);
-			}
+			    //if the data is also outside the large threshold (taking gravity into account)
+                if (data.get(i) > GRAVITY + largethreshold || data.get(i) < GRAVITY - largethreshold)
+                {
+                    //a large anomaly was found
+                    return new anomalyTypePosition(2, i);
+                }
+                //a small anomaly was found
+                return new anomalyTypePosition(1, i);
+            }
 		}
 		//if no data values were found to be anomalies
 		return new anomalyTypePosition(0, -1);
