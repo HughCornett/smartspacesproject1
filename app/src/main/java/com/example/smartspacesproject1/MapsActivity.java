@@ -349,6 +349,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void setMarkers(LatLng position, int type)
     {
+
         if(type==0)
         {
             return;
