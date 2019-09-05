@@ -39,22 +39,22 @@ public class averageAndFindAnomalies
 
 	/**
 	   * Checks a Vector of filtered accelerometer data for
-	   * anomalies above the given threshhold value
-	   * @param threshhold 
-	   *	a data value outside this threshhold is an anomaly
+	   * anomalies above the given threshold value
+	   * @param threshold 
+	   *	a data value outside this threshold is an anomaly
 	   * @param data
 	   *	a Vector of Doubles, the data to be analysed for anomalies
 	   * @return
 	   * 	true if an anomaly is found
 	   *	false otherwise
 	   */
-	public static boolean checkForAnomalies(Double threshhold, Vector<Double> data)
+	public static boolean checkForAnomalies(Double threshold, Vector<Double> data)
 	{
 		//for each value in the data
 		for(int i = 0; i < data.size(); i++)
 		{
-			//if the data is above the threshhold or below the negative threshhold (taking gravity into account)
-			if(data.get(i) > GRAVITY + threshhold || data.get(i) < GRAVITY + (-1 *  threshhold))
+			//if the data is above the threshold or below the negative threshold (taking gravity into account)
+			if(data.get(i) > GRAVITY + threshold || data.get(i) < GRAVITY + (-1 *  threshold))
 			{
 				return true;
 			}
@@ -65,10 +65,10 @@ public class averageAndFindAnomalies
 
 	/**
 	* Returns the type of anomaly found in the data as an int
-	 * @param smallThreshhold
-	 * 		a data value outside smallThreshhold and inside largeThreshhold is a small anomaly
-	 * @param largeThreshhold
-	 * 	 * 	a data value outside largeThreshhold is a large anomaly
+	 * @param smallthreshold
+	 * 		a data value outside smallthreshold and inside largethreshold is a small anomaly
+	 * @param largethreshold
+	 * 	 * 	a data value outside largethreshold is a large anomaly
 	 * @param data
 	 * 		a Vector of Doubles, the data to be analysed for anomalies
 	 * @return
@@ -77,7 +77,7 @@ public class averageAndFindAnomalies
 	 *		(-)2: Large anomaly
 	 *		(-)3: Slope
 	 */
-	public static int getAnomalyType(Double smallThreshhold, Double largeThreshhold, Vector<Double> data)
+	public static int getAnomalyType(Double smallthreshold, Double largethreshold, Vector<Double> data)
 	{
 		int anomalyCode = 0;
 
@@ -124,19 +124,19 @@ public class averageAndFindAnomalies
 		//for each value in the data
 		for(int i = 0; i < data.size(); i++)
 		{
-			//if the data is above the threshhold (taking gravity into account)
-			if(data.get(i) > GRAVITY + smallThreshhold)
+			//if the data is above the threshold (taking gravity into account)
+			if(data.get(i) > GRAVITY + smallthreshold)
 			{
-				if(data.get(i) > GRAVITY + largeThreshhold)
+				if(data.get(i) > GRAVITY + largethreshold)
 				{
 					return 2;
 				}
 				return 1;
 			}
-			//if the data is below the negative threshhold (taking gravity into account)
-			else if(data.get(i) < GRAVITY + (-1 *  smallThreshhold))
+			//if the data is below the negative threshold (taking gravity into account)
+			else if(data.get(i) < GRAVITY + (-1 *  smallthreshold))
 			{
-				if(data.get(i) < GRAVITY + (-1 * largeThreshhold))
+				if(data.get(i) < GRAVITY + (-1 * largethreshold))
 				{
 					return -2;
 				}
