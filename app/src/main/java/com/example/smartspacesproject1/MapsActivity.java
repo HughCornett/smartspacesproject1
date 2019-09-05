@@ -113,14 +113,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         graph = (GraphView) findViewById(R.id.graph);
 
-        Button settingsButton = (Button) findViewById(R.id.settings);
+        /*Button settingsButton = (Button) findViewById(R.id.settings);
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MapsActivity.this, settingsActivity.class);
                 startActivity(intent);
             }
-        });
+        });*/
 
 
     }
@@ -177,14 +177,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 Vector<Double> newdata;
 
-                newdata = averageAndFindAnomalies.movingAverage(settingsActivity.getWindowSize(), zValues);
+                newdata = averageAndFindAnomalies.movingAverage(5, zValues);
 
                 for(int i = 0; i<newdata.size(); ++i)
                 {
                     allValues.add(newdata.elementAt(i));
                 }
 
-                if(averageAndFindAnomalies.checkForAnomalies(settingsActivity.getLargeThreshold(), newdata))
+                if(averageAndFindAnomalies.checkForAnomalies(9.0, newdata))
                 {
                     addMarkerOnLocation(BitmapDescriptorFactory.HUE_MAGENTA,
                             new LatLng((currentLatLang.latitude+lastLatLang.latitude)/2,(currentLatLang.longitude+lastLatLang.longitude)/2));
