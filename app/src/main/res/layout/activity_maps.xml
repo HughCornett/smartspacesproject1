@@ -38,5 +38,63 @@
         android:layout_centerHorizontal="true"
         android:text="z" />
 
+    <com.jjoe64.graphview.GraphView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:id="@+id/graph"
+        android:layout_below="@id/ztext"
+        />
+
+    <Button
+        android:id="@+id/upwindow"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/graph"
+
+        android:text="up (1)"
+        android:onClick="UpWindow"/>
+
+    <Button
+        android:id="@+id/downwindow"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/upwindow"
+        android:text="down (1)"
+        android:onClick="DownWindow"/>
+
+    <Button
+        android:id="@+id/downthresh"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/upthresh"
+        android:text="down(0.5)"
+        android:onClick="DownThresh"/>
+
+    <Button
+        android:id="@+id/upthresh"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/downwindow"
+        android:text="up(0.5)"
+        android:onClick="UpThresh"/>
+
+    <TextView
+        android:id="@+id/windowsize"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="windowsize"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/upwindow"
+
+        />
+
+    <TextView
+        android:id="@+id/thresh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/upthresh"
+        android:text="thresh" />
+
 
 </RelativeLayout>
