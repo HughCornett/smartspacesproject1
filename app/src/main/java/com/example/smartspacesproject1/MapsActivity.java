@@ -288,6 +288,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     {
         //assume marker is not too close
         boolean tooClose = false;
+        int replacing = -1;
         //for each existing marker
         for(int i = 0; i < markers.size(); i++)
         {
@@ -305,13 +306,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 {
                     //this marker is too close to be placed
                     tooClose = true;
+                    replacing = -1;
                     break;
+                }
+                else {
+                    replacing = i;
                 }
             }
         }
         //if this marker is not too close to any markers
         if(!tooClose)
         {
+            if(replacing > -1)
+            {
+                markers.get(replacing).remove();
+            }
             //place the marker
             return mMap.addMarker(new MarkerOptions().position(current)
                     .icon(BitmapDescriptorFactory.defaultMarker(color)).title(""+color));
