@@ -3,6 +3,7 @@ package com.example.smartspacesproject1;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -17,6 +18,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -29,6 +31,9 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.util.Vector;
 
@@ -65,6 +70,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private Vector<Marker> markers = new Vector<>();
 
+    private Vector<Double> allValues = new Vector<>();
+
 
 
 
@@ -73,6 +80,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private int WINDOW_SIZE = 5;
     private double THRESHHOLD = 9.0;
 
+
+    //graph
+    GraphView graph;
 
 
     @Override
@@ -88,9 +98,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         zText = (TextView) findViewById(R.id.ztext);
 
-        windowsize = (TextView) findViewById(R.id.windowsize);
+        //windowsize = (TextView) findViewById(R.id.windowsize);
 
-        thresh = (TextView) findViewById((R.id.thresh)) ;
+        //thresh = (TextView) findViewById((R.id.thresh)) ;
 
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -100,6 +110,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         accelerometerListener = createAccelerometerListener();
 
         sensorManager.registerListener(accelerometerListener, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+
+        graph = (GraphView) findViewById(R.id.graph);
+
+        Button settingsButton = (Button) findViewById(R.id.settings);
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MapsActivity.this, settingsActivity.class);
+                startActivity(intent);
+            }
+        });
+
 
     }
 
@@ -155,9 +177,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 Vector<Double> newdata;
 
-                newdata = averageAndFindAnomalies.movingAverage(WINDOW_SIZE, zValues);
+                newdata = averageAndFindAnomalies.movingAverage(settingsActivity.getWindowSize(), zValues);
 
-                if(averageAndFindAnomalies.checkForAnomalies(THRESHHOLD, newdata))
+                for(int i = 0; i<newdata.size(); ++i)
+                {
+                    allValues.add(newdata.elementAt(i));
+                }
+
+                if(averageAndFindAnomalies.checkForAnomalies(settingsActivity.getLargeThreshold(), newdata))
                 {
                     addMarkerOnLocation(BitmapDescriptorFactory.HUE_MAGENTA,
                             new LatLng((currentLatLang.latitude+lastLatLang.latitude)/2,(currentLatLang.longitude+lastLatLang.longitude)/2));
@@ -193,6 +220,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void StartMeasurements(View v)
     {
         startMeasurements=true;
+        graph.removeAllSeries();
     }
 
 
@@ -297,6 +325,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         THRESHHOLD+=0.5;
         thresh.setText(""+THRESHHOLD);
     }
+
+
+
+    public void ShowGraph(View v)
+    {
+        startMeasurements = false;
+        LineGraphSeries <DataPoint> lineGraphSeries = new LineGraphSeries<>();
+        for(int i = 0; i<allValues.size(); ++i)
+        {
+            lineGraphSeries.appendData(new DataPoint(i,allValues.elementAt(i).doubleValue()),false, allValues.size());
+        }
+        allValues.clear();
+        graph.addSeries(lineGraphSeries);
+        graph.getViewport().setScalable(true);
+        graph.getViewport().setScalableY(true);
+        graph.getViewport().setScrollable(true);
+        graph.getViewport().setScrollableY(true);
+
+
+    }
+
+
 }
 
 

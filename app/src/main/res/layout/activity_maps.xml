@@ -17,7 +17,8 @@
         android:layout_height="wrap_content"
         android:text="Start"
         android:layout_below="@id/button2"
-        android:layout_centerHorizontal="true"
+        android:layout_alignLeft="@id/button2"
+
         android:onClick="StartMeasurements"/>
 
     <Button
@@ -40,61 +41,38 @@
 
     <com.jjoe64.graphview.GraphView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="200dp"
         android:id="@+id/graph"
         android:layout_below="@id/ztext"
         />
 
     <Button
-        android:id="@+id/upwindow"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/graph"
-
-        android:text="up (1)"
-        android:onClick="UpWindow"/>
-
-    <Button
-        android:id="@+id/downwindow"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/upwindow"
-        android:text="down (1)"
-        android:onClick="DownWindow"/>
-
-    <Button
-        android:id="@+id/downthresh"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/upthresh"
-        android:text="down(0.5)"
-        android:onClick="DownThresh"/>
-
-    <Button
-        android:id="@+id/upthresh"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/downwindow"
-        android:text="up(0.5)"
-        android:onClick="UpThresh"/>
-
-    <TextView
-        android:id="@+id/windowsize"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="windowsize"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/upwindow"
-
+        android:layout_below="@id/button2"
+        android:layout_alignRight="@id/button2"
+        android:text="show graph"
+        android:onClick="ShowGraph"
+        android:id="@+id/showgraph"
         />
 
-    <TextView
-        android:id="@+id/thresh"
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/upthresh"
-        android:text="thresh" />
+        android:layout_alignParentRight="true"
+        android:text="Settings"
+        android:id="@+id/settings"
+        />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </ScrollView>
 
 
 </RelativeLayout>

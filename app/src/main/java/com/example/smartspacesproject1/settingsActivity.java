@@ -1,5 +1,6 @@
 package com.example.smartspacesproject1;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -28,6 +29,15 @@ public class settingsActivity extends FragmentActivity
         windowsizeText.setText(""+windowSize);
         smallthreshText.setText(""+smallThreshold);
         largethreshText.setText(""+largeThreshold);
+
+
+        Button backButton = (Button) findViewById(R.id.settings);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
     }
 
 
@@ -67,10 +77,7 @@ public class settingsActivity extends FragmentActivity
         largethreshText.setText(""+largeThreshold);
     }
 
-    public void Back(View v)
-    {
-        //TODO create this method
-    }
+
 
     public static Double getSmallThreshold()
     {

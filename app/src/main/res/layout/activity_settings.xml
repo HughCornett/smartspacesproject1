@@ -107,7 +107,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/blank3"
         android:text="Back"
-        android:onClick="Back"/>
+        />
 
 
 </LinearLayout>
