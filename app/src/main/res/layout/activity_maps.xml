@@ -56,7 +56,7 @@
         android:id="@+id/showgraph"
         />
 
-    
+
 
 
 </RelativeLayout>

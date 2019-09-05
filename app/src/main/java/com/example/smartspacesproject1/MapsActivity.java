@@ -78,7 +78,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     //constants
     private final int ZOOM = 15;
     private int WINDOW_SIZE = 5;
-    private double THRESHHOLD = 9.0;
+    private double SMALL_THRESHOLD = 9.0;
+    private double BIG_THRESHOLD = 13.0;
 
 
     //graph
@@ -175,21 +176,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 currentLatLang = new LatLng(location.getLatitude(),location.getLongitude());
 
-                Vector<Double> newdata;
+                if(currentLatLang!=null && lastLatLang!=null && !zValues.isEmpty()) {
+                    Vector<Double> newdata;
 
-                newdata = averageAndFindAnomalies.movingAverage(5, zValues);
+                    newdata = averageAndFindAnomalies.movingAverage(WINDOW_SIZE, zValues);
 
-                for(int i = 0; i<newdata.size(); ++i)
-                {
-                    allValues.add(newdata.elementAt(i));
+                    for (int i = 0; i < newdata.size(); ++i) {
+                        allValues.add(newdata.elementAt(i));
+                    }
+
+                    anomalyTypePosition anomalyTypePosition = averageAndFindAnomalies.getAnomalyType(SMALL_THRESHOLD, BIG_THRESHOLD, newdata);
+
+                    LatLng marker = findingThePoint.find(lastLatLang, currentLatLang, newdata.size(), anomalyTypePosition.getPosition());
+
+                    setMarkers(marker, anomalyTypePosition.getType());
                 }
-
-                if(averageAndFindAnomalies.checkForAnomalies(9.0, newdata))
-                {
-                    addMarkerOnLocation(BitmapDescriptorFactory.HUE_MAGENTA,
-                            new LatLng((currentLatLang.latitude+lastLatLang.latitude)/2,(currentLatLang.longitude+lastLatLang.longitude)/2));
-                }
-
                 zValues.clear();
 
             }
@@ -302,7 +303,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .icon(BitmapDescriptorFactory.defaultMarker(color)));
     }
 
-    public void UpWindow(View v)
+ /*   public void UpWindow(View v)
     {
         WINDOW_SIZE+=1;
         windowsize.setText(""+WINDOW_SIZE);
@@ -316,16 +317,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void DownThresh(View v)
     {
-        THRESHHOLD-=0.5;
-        thresh.setText(""+THRESHHOLD);
+        THRESHOLD-=0.5;
+        thresh.setText(""+THRESHOLD);
     }
 
     public void UpThresh(View v)
     {
-        THRESHHOLD+=0.5;
-        thresh.setText(""+THRESHHOLD);
+        THRESHOLD+=0.5;
+        thresh.setText(""+THRESHOLD);
     }
-
+*/
 
 
     public void ShowGraph(View v)
@@ -345,6 +346,36 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     }
+
+    private void setMarkers(LatLng position, int type)
+    {
+        if(type==0)
+        {
+            return;
+        }
+        else if(type==1)
+        {
+            markers.add(addMarkerOnLocation(BitmapDescriptorFactory.HUE_ROSE,position));
+            return;
+        }
+        else if(type==2)
+        {
+            markers.add(addMarkerOnLocation(BitmapDescriptorFactory.HUE_RED,position));
+            return;
+        }
+        else if(type==-1)
+        {
+            markers.add(addMarkerOnLocation(BitmapDescriptorFactory.HUE_AZURE,position));
+            return;
+        }
+        else if(type==-2)
+        {
+            markers.add(addMarkerOnLocation(BitmapDescriptorFactory.HUE_BLUE,position));
+            return;
+        }
+
+    }
+
 
 
 }
