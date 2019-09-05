@@ -80,6 +80,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private int WINDOW_SIZE = 5;
     private double SMALL_THRESHOLD = 9.0;
     private double BIG_THRESHOLD = 13.0;
+    private static final Double CLUSTER_DISTANCE = 0.0003;
 
 
     //graph
@@ -296,11 +297,38 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-
+    //check if this marker is too close to another marker
     private Marker addMarkerOnLocation(float color, LatLng current)
     {
-        return mMap.addMarker(new MarkerOptions().position(current)
-                .icon(BitmapDescriptorFactory.defaultMarker(color)));
+        //assume marker is not too close
+        boolean tooClose = false;
+        //for each existing marker
+        for(int i = 0; i < markers.size(); i++)
+        {
+            //get LatLng of marker being checked
+            LatLng checking = markers.get(i).getPosition();
+
+            //get the pythagorean distance between the marker and the possible new marker
+            Double distance = Math.sqrt(Math.pow((checking.latitude - currentLatLang.latitude),2) +
+                    Math.pow((checking.longitude - currentLatLang.longitude),2));
+
+            //if the new marker is too close to the existing one
+            if(distance < CLUSTER_DISTANCE)
+            {
+                //this marker is too close to be placed
+                tooClose = true;
+                break;
+            }
+        }
+        //if this marker is not too close to any markers
+        if(!tooClose)
+        {
+            //place the marker
+            return mMap.addMarker(new MarkerOptions().position(current)
+                    .icon(BitmapDescriptorFactory.defaultMarker(color)));
+        }
+        //don't place any marker
+        return null;
     }
 
  /*   public void UpWindow(View v)
