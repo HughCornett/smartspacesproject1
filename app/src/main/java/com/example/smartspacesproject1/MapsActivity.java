@@ -27,6 +27,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.Vector;
@@ -48,29 +49,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LocationListener locationListener;
 
     private LatLng currentLatLang = null;
-
+    private LatLng lastLatLang=null;
     //startMeasurements
     private boolean startMeasurements = false;
     private Button mButton;
 
-    private TextView zText;
 
 
+    private TextView zText, windowsize, thresh;
+
+
+
+    //containers
     private Vector<Double> zValues = new Vector<>();
 
-
-    private Location lastLocation = null;
-
-
-    private boolean mLocationPermissionsGranted = false;
+    private Vector<Marker> markers = new Vector<>();
 
 
 
-    private int zoom = 15;
 
-
-    final private int windowsize =5;
-    final private double threshhold = 9.0;
+    //constants
+    private final int ZOOM = 15;
+    private int WINDOW_SIZE = 5;
+    private double THRESHHOLD = 9.0;
 
 
 
@@ -79,28 +80,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-
         getLocationPermission();
 
-
-
         mButton = (Button) findViewById(R.id.button);
+
         mButton.setEnabled(false);
 
         zText = (TextView) findViewById(R.id.ztext);
+
+        windowsize = (TextView) findViewById(R.id.windowsize);
+
+        thresh = (TextView) findViewById((R.id.thresh)) ;
 
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
-
         accelerometerListener = createAccelerometerListener();
 
         sensorManager.registerListener(accelerometerListener, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-
-
-
 
     }
 
@@ -123,7 +122,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onSensorChanged(SensorEvent sensorEvent) {
 
-                if(startMeasurements==true) {
+                if(startMeasurements) {
 
                     Double z= Double.valueOf(sensorEvent.values[2]);
                     zValues.add(z);
@@ -149,23 +148,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onLocationChanged(Location location) {
 
-
-
+                if(currentLatLang!=null)
+                    lastLatLang = new LatLng(currentLatLang.latitude, currentLatLang.longitude);
 
                 currentLatLang = new LatLng(location.getLatitude(),location.getLongitude());
 
                 Vector<Double> newdata;
 
-                newdata = averageAndFindAnomalies.movingAverage(windowsize, zValues);
+                newdata = averageAndFindAnomalies.movingAverage(WINDOW_SIZE, zValues);
 
-                if(averageAndFindAnomalies.checkForAnomalies(threshhold, newdata))
+                if(averageAndFindAnomalies.checkForAnomalies(THRESHHOLD, newdata))
                 {
-                    addMarkerOnLocation(BitmapDescriptorFactory.HUE_MAGENTA, currentLatLang);
+                    addMarkerOnLocation(BitmapDescriptorFactory.HUE_MAGENTA,
+                            new LatLng((currentLatLang.latitude+lastLatLang.latitude)/2,(currentLatLang.longitude+lastLatLang.longitude)/2));
                 }
 
                 zValues.clear();
-
-
 
             }
 
@@ -194,10 +192,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void StartMeasurements(View v)
     {
-
         startMeasurements=true;
-
-
     }
 
 
@@ -212,13 +207,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     permissions[1]) == PackageManager.PERMISSION_GRANTED){
 
                 //initialize
-                mLocationPermissionsGranted = true;
+
                 initMap();
+
                 locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
                 locationListener = createLocationListener();
-
-
 
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 
@@ -255,34 +249,54 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void CurrentLocation(View v)
     {
         if(currentLatLang!=null) {
+
             LatLng current = currentLatLang;
-            moveCamera(currentLatLang, zoom);
+
+            moveCamera(currentLatLang, ZOOM);
 
             //addMarkerOnLocation(BitmapDescriptorFactory.HUE_AZURE, current);
+
             mButton.setEnabled(true);
 
         }
         else
         {
-            Toast.makeText(this,"not connected!", Toast.LENGTH_SHORT );
+            Toast toast = Toast.makeText(this,"not connected!", Toast.LENGTH_SHORT );
+
+            toast.show();
         }
     }
 
 
-    private void addMarkerOnLocation(float color, LatLng current)
+    private Marker addMarkerOnLocation(float color, LatLng current)
     {
-        mMap.addMarker(new MarkerOptions().position(current)
+        return mMap.addMarker(new MarkerOptions().position(current)
                 .icon(BitmapDescriptorFactory.defaultMarker(color)));
     }
 
+    public void UpWindow(View v)
+    {
+        WINDOW_SIZE+=1;
+        windowsize.setText(""+WINDOW_SIZE);
+    }
 
+    public void DownWindow(View v)
+    {
+        WINDOW_SIZE-=1;
+        windowsize.setText(""+WINDOW_SIZE);
+    }
 
+    public void DownThresh(View v)
+    {
+        THRESHHOLD-=0.5;
+        thresh.setText(""+THRESHHOLD);
+    }
 
-
-
-
-
-
+    public void UpThresh(View v)
+    {
+        THRESHHOLD+=0.5;
+        thresh.setText(""+THRESHHOLD);
+    }
 }
 
 
