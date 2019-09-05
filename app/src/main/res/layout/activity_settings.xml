@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/upwindow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Window size up (1)"
+        android:onClick="UpWindow"/>
+
+    <TextView
+        android:id="@+id/windowsize"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="default window size"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/upwindow"
+
+        />
+
+    <Button
+        android:id="@+id/downwindow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/upwindow"
+        android:text="Window size down (1)"
+        android:onClick="DownWindow"/>
+
+    <TextView
+        android:id="@+id/blank"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_below="@id/downwindow"
+        android:text="\n" />
+
+    <Button
+        android:id="@+id/upsmallthresh"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/blank"
+        android:text="Small threshold up (0.5)"
+        android:onClick="UpSmallThresh"/>
+
+    <TextView
+        android:id="@+id/smallthresh"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_below="@id/upsmallthresh"
+        android:text="default small threshold" />
+
+    <Button
+        android:id="@+id/downsmallthresh"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/smallthresh"
+        android:text="Small threshold down (0.5)"
+        android:onClick="DownSmallThresh"/>
+
+    <TextView
+        android:id="@+id/blank2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_below="@id/downsmallthresh"
+        android:text="\n" />
+
+    <Button
+        android:id="@+id/uplargethresh"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/blank2"
+        android:text="Large threshold up (0.5)"
+        android:onClick="UpLargeThresh"/>
+
+    <TextView
+        android:id="@+id/largethresh"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_below="@id/uplargethresh"
+        android:text="default large threshold" />
+
+    <Button
+        android:id="@+id/downlargethresh"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/largethresh"
+        android:text="Threshold down (0.5)"
+        android:onClick="DownLargeThresh"/>
+
+    <TextView
+        android:id="@+id/blank3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_below="@id/downlargethresh"
+        android:text="\n" />
+
+    <Button
+        android:id="@+id/back"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/blank3"
+        android:text="Back"
+        android:onClick="Back"/>
+
+
+</LinearLayout>
