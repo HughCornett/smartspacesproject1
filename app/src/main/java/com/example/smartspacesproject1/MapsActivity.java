@@ -80,7 +80,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private int WINDOW_SIZE = 5;
     private double SMALL_THRESHOLD = 9.0;
     private double BIG_THRESHOLD = 13.0;
-    private static final Double CLUSTER_DISTANCE = 0.0003;
+    private static final Double CLUSTER_DISTANCE = 0.0001;
 
 
     //graph
@@ -100,11 +100,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         zText = (TextView) findViewById(R.id.ztext);
 
-        //windowsize = (TextView) findViewById(R.id.windowsize);
-
-        //thresh = (TextView) findViewById((R.id.thresh)) ;
-
-
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -115,14 +110,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         graph = (GraphView) findViewById(R.id.graph);
 
-        /*Button settingsButton = (Button) findViewById(R.id.settings);
-        settingsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MapsActivity.this, settingsActivity.class);
-                startActivity(intent);
-            }
-        });*/
+
 
 
     }
@@ -284,8 +272,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             moveCamera(currentLatLang, ZOOM);
 
-            //addMarkerOnLocation(BitmapDescriptorFactory.HUE_AZURE, current);
-
             mButton.setEnabled(true);
 
         }
@@ -331,30 +317,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return null;
     }
 
- /*   public void UpWindow(View v)
-    {
-        WINDOW_SIZE+=1;
-        windowsize.setText(""+WINDOW_SIZE);
-    }
 
-    public void DownWindow(View v)
-    {
-        WINDOW_SIZE-=1;
-        windowsize.setText(""+WINDOW_SIZE);
-    }
-
-    public void DownThresh(View v)
-    {
-        THRESHOLD-=0.5;
-        thresh.setText(""+THRESHOLD);
-    }
-
-    public void UpThresh(View v)
-    {
-        THRESHOLD+=0.5;
-        thresh.setText(""+THRESHOLD);
-    }
-*/
 
 
     public void ShowGraph(View v)
@@ -378,31 +341,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void setMarkers(LatLng position, int type)
     {
 
+
         if(type==0)
         {
             return;
         }
         else if(type==1)
-        {
-            markers.add(addMarkerOnLocation(BitmapDescriptorFactory.HUE_ROSE,position));
-            return;
+        {   //small anomaly
+            markers.add(addMarkerOnLocation(BitmapDescriptorFactory.HUE_YELLOW,position));
+
         }
         else if(type==2)
         {
+            //big anomaly
             markers.add(addMarkerOnLocation(BitmapDescriptorFactory.HUE_RED,position));
-            return;
-        }
-        else if(type==-1)
-        {
-            markers.add(addMarkerOnLocation(BitmapDescriptorFactory.HUE_AZURE,position));
-            return;
-        }
-        else if(type==-2)
-        {
-            markers.add(addMarkerOnLocation(BitmapDescriptorFactory.HUE_BLUE,position));
-            return;
+
         }
 
+
+        if(markers.lastElement()==null)
+        {
+            //data clustering
+            markers.remove(markers.size()-1);
+        }
     }
 
 
