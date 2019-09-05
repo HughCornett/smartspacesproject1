@@ -301,9 +301,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             //if the new marker is too close to the existing one
             if(distance < CLUSTER_DISTANCE)
             {
-                //this marker is too close to be placed
-                tooClose = true;
-                break;
+                if(color == BitmapDescriptorFactory.HUE_YELLOW || markers.get(i).getTitle().equals(""+BitmapDescriptorFactory.HUE_RED))
+                {
+                    //this marker is too close to be placed
+                    tooClose = true;
+                    break;
+                }
             }
         }
         //if this marker is not too close to any markers
@@ -311,7 +314,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         {
             //place the marker
             return mMap.addMarker(new MarkerOptions().position(current)
-                    .icon(BitmapDescriptorFactory.defaultMarker(color)));
+                    .icon(BitmapDescriptorFactory.defaultMarker(color)).title(""+color));
         }
         //don't place any marker
         return null;

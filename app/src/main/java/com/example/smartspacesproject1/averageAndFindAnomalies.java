@@ -82,7 +82,7 @@ public class averageAndFindAnomalies
 	public static anomalyTypePosition getAnomalyType(Double smallthreshold, Double largethreshold, Vector<Double> data)
 	{
 		//CHECK FOR POTHOLES/BUMPS
-
+        int maxAnomalyFound = 0;
 		//for each value in the data
 		for(int i = 0; i < data.size(); i++)
 		{
@@ -96,10 +96,10 @@ public class averageAndFindAnomalies
                     return new anomalyTypePosition(2, i);
                 }
                 //a small anomaly was found
-                return new anomalyTypePosition(1, i);
+                maxAnomalyFound = 1;
             }
 		}
 		//if no data values were found to be anomalies
-		return new anomalyTypePosition(0, -1);
+		return new anomalyTypePosition(maxAnomalyFound, -1);
 	}
 }
