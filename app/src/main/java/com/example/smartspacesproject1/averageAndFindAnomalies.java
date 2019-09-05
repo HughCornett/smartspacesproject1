@@ -73,8 +73,10 @@ public class averageAndFindAnomalies
 	 * 		a Vector of Doubles, the data to be analysed for anomalies
 	 * @return
 	 *		0: No anomaly
-	 *		(-)1: Small anomaly
-	 *		(-)2: Large anomaly
+	 *		-1: Small hole
+	 *		-2: Large hole
+	 *		 1: Small bump
+	 *		 2: Large bump
 	 */
 	public static anomalyTypePosition getAnomalyType(Double smallthreshold, Double largethreshold, Vector<Double> data)
 	{
