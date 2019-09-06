@@ -53,8 +53,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private LocationListener locationListener;
 
-    private LatLng currentLatLang = null;
-    private LatLng lastLatLang=null;
+    private LatLng currentLatLng = null;
+    private LatLng lastLatLng=null;
     //startMeasurements
     private boolean startMeasurements = false;
     private Button mButton;
@@ -94,12 +94,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         getLocationPermission();
 
+        //start button
         mButton = (Button) findViewById(R.id.button);
 
         mButton.setEnabled(false);
 
         zText = (TextView) findViewById(R.id.ztext);
 
+        //initialize accelerometer
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -108,6 +110,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         sensorManager.registerListener(accelerometerListener, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
 
+        //initialize graph
         graph = (GraphView) findViewById(R.id.graph);
 
 
@@ -160,12 +163,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onLocationChanged(Location location) {
 
-                if(currentLatLang!=null)
-                    lastLatLang = new LatLng(currentLatLang.latitude, currentLatLang.longitude);
+                if(currentLatLng!=null)
+                    lastLatLng = new LatLng(currentLatLng.latitude, currentLatLng.longitude);
 
-                currentLatLang = new LatLng(location.getLatitude(),location.getLongitude());
+                currentLatLng = new LatLng(location.getLatitude(),location.getLongitude());
 
-                if(currentLatLang!=null && lastLatLang!=null && !zValues.isEmpty()) {
+                if(currentLatLng!=null && lastLatLng!=null && !zValues.isEmpty()) {
                     Vector<Double> newdata;
 
                     newdata = averageAndFindAnomalies.movingAverage(WINDOW_SIZE, zValues);
@@ -176,7 +179,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                     anomalyTypePosition anomalyTypePosition = averageAndFindAnomalies.getAnomalyType(SMALL_THRESHOLD, BIG_THRESHOLD, newdata);
 
-                    LatLng marker = findingThePoint.find(lastLatLang, currentLatLang, newdata.size(), anomalyTypePosition.getPosition());
+                    LatLng marker = findingThePoint.find(lastLatLng, currentLatLng, newdata.size(), anomalyTypePosition.getPosition());
 
                     setMarkers(marker, anomalyTypePosition.getType());
                 }
@@ -266,11 +269,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void CurrentLocation(View v)
     {
-        if(currentLatLang!=null) {
+        if(currentLatLng!=null) {
 
-            LatLng current = currentLatLang;
+            LatLng current = currentLatLng;
 
-            moveCamera(currentLatLang, ZOOM);
+            moveCamera(currentLatLng, ZOOM);
 
             mButton.setEnabled(true);
 
@@ -296,8 +299,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             LatLng checking = markers.get(i).getPosition();
 
             //get the pythagorean distance between the marker and the possible new marker
-            Double distance = Math.sqrt(Math.pow((checking.latitude - currentLatLang.latitude),2) +
-                    Math.pow((checking.longitude - currentLatLang.longitude),2));
+            Double distance = Math.sqrt(Math.pow((checking.latitude - currentLatLng.latitude),2) +
+                    Math.pow((checking.longitude - currentLatLng.longitude),2));
 
             //if the new marker is too close to the existing one
             if(distance < CLUSTER_DISTANCE)
